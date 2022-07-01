@@ -33,7 +33,7 @@ router.post('/', celebrate({
       }
       return value;
     }),
-    movieId: Joi.string().required(),
+    movieId: Joi.number().required(),
     nameRU: Joi.string().required(),
     nameEN: Joi.string().required(),
   }),
