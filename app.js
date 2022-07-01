@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const { celebrate, Joi, errors } = require('celebrate');
+const { errors } = require('celebrate');
 const cors = require('cors');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const NotFoundError = require('./errors/not-found-err');
@@ -22,39 +22,20 @@ app.use(bodyParser.urlencoded({
 
 const userRouter = require('./routes/users');
 const movieRouter = require('./routes/movies');
-const { createUser, login } = require('./controllers/users');
+const regRouter = require('./routes/registration');
+const authRouter = require('./routes/auth');
 const auth = require('./middlewares/auth');
 
 app.use(requestLogger);
 app.use(cors());
 
-app.post(
-  '/signup',
-  celebrate({
-    body: Joi.object().keys({
-      email: Joi.string().required().email(),
-      password: Joi.string().required(),
-      name: Joi.string().required(),
-    }),
-  }),
-  createUser,
-);
-
-app.post(
-  '/signin',
-  celebrate({
-    body: Joi.object().keys({
-      email: Joi.string().required().email(),
-      password: Joi.string().required(),
-    }),
-  }),
-  login,
-);
+app.use(regRouter);
+app.use(authRouter);
 
 app.use(auth);
-// app.get('/users/me', getCurrentUser);
-app.use('/users', userRouter);
-app.use('/movies', movieRouter);
+
+app.use(userRouter);
+app.use(movieRouter);
 
 app.use('*', () => {
   throw new NotFoundError('Запрашиваемая страница не найдена');
