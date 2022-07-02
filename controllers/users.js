@@ -5,6 +5,7 @@ const { NODE_ENV, JWT_SECRET_KEY } = process.env;
 const User = require('../models/user');
 const NotFoundError = require('../errors/not-found-err');
 const InValidDataError = require('../errors/in-valid-data-err');
+const EmailDuplicateError = require('../errors/email-duplicate-err');
 
 const createUser = (req, res, next) => {
   const {
@@ -65,12 +66,23 @@ const updateUser = (req, res, next) => {
     throw new InValidDataError('Переданы некорректные данные при обновлении данных пользователя');
   }
   User.findByIdAndUpdate(req.user, { email, name }, { new: true })
-    .then((data) => res.status(200).send({ data }))
+    .then((data) => res.send({ data }))
     .catch((error) => {
-      if (error.name === 'ValidationError') {
-        next(new InValidDataError('Переданы некорректные данные при создании карточки'));
-      } else { next(error); }
+      if (error.code === 11000) {
+        next(new EmailDuplicateError('Пользователь с таким e-mail уже существует'));
+      } else if (error._message === 'user validation failed') {
+        const validateError = new InValidDataError('Переданы некорректные данные при обновлении данных пользователя');
+        return next(validateError);
+      }
+      return next(error);
     })
+
+  // {
+  //   if (error.name === 'ValidationError') {
+  //     next(new InValidDataError('Переданы некорректные данные при создании карточки'));
+  //   } else { next(error); }
+  // }
+
     .catch(next);
 };
 

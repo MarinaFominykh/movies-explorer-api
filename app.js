@@ -26,6 +26,7 @@ const userRouter = require('./routes/users');
 const movieRouter = require('./routes/movies');
 const regRouter = require('./routes/registration');
 const authRouter = require('./routes/auth');
+const handlerErrors = require('./middlewares/handlerErrors');
 const auth = require('./middlewares/auth');
 
 app.use(requestLogger);
@@ -46,15 +47,8 @@ app.use('*', () => {
 app.use(errorLogger);
 app.use(errors());
 
-app.use((err, req, res, next) => {
-  const {
-    statusCode = 500, message,
-  } = err;
-  res.status(statusCode).send({
-    message: statusCode === 500 ? 'На сервере произошла ошибка' : message,
-  });
-  next();
-});
+app.use(errors());
+app.use(handlerErrors);
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
