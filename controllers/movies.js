@@ -32,13 +32,12 @@ const createMovie = (req, res, next) => {
     movieId,
     owner,
   })
-    .then((movie) => res.status(200).send(movie))
+    .then((movie) => res.send(movie))
     .catch((error) => {
       if (error.name === 'ValidationError') {
         const inValidDataError = new InValidDataError('Переданы некорректные данные');
         return next(inValidDataError);
       }
-      // Работает с return?
       return next(error);
     });
 };
@@ -58,7 +57,7 @@ const deleteMovie = (req, res, next) => {
       }
       throw new ForbiddenError('Вы не можете удалять чужие фильмы');
     })
-    .then(() => res.status(200).send({
+    .then(() => res.send({
       message: 'Фильм успешно удален!',
     }))
     .catch((error) => {
@@ -78,7 +77,7 @@ const getMovie = (req, res, next) => {
       if (movie.length === 0) {
         throw new NotFoundError('У вас отсутствуют сохраненные фильмы');
       }
-      res.status(200).send(movie);
+      res.send(movie);
     })
     .catch(next);
 };

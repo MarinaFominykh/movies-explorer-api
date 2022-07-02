@@ -1,7 +1,7 @@
 {
   "name": "movies-explorer-api",
   "version": "1.0.0",
-  "description": "",
+  "description": "Бэкенд для дипломной работы",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -14,7 +14,7 @@
     "url": "git+https://github.com/MarinaFominykh/movies-explorer-api.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "MarinaFominykh",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/MarinaFominykh/movies-explorer-api/issues"
