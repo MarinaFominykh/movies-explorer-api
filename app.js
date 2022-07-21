@@ -2,7 +2,6 @@ const express = require('express');
 require('dotenv').config();
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-
 const { errors } = require('celebrate');
 const cors = require('cors');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
@@ -17,11 +16,6 @@ mongoose.connect('mongodb://localhost:27017/bitfilmsdb', {
   useNewUrlParser: true,
 });
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({
-  extended: true,
-}));
-
 const userRouter = require('./routes/users');
 const movieRouter = require('./routes/movies');
 const regRouter = require('./routes/registration');
@@ -29,6 +23,10 @@ const authRouter = require('./routes/auth');
 const handlerErrors = require('./middlewares/handlerErrors');
 const auth = require('./middlewares/auth');
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+  extended: true,
+}));
 app.use(requestLogger);
 app.use(cors());
 

@@ -43,6 +43,7 @@ const login = (req, res, next) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
     .then((user) => {
+      console.log(process.env);
       const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET_KEY : 'dev-secret', { expiresIn: '7d' });
       res.send({ token });
     })
@@ -62,27 +63,17 @@ const getCurrentUser = (req, res, next) => {
 
 const updateUser = (req, res, next) => {
   const { email, name } = req.body;
-  if (!email || !name) {
-    throw new InValidDataError('Переданы некорректные данные при обновлении данных пользователя');
-  }
   User.findByIdAndUpdate(req.user, { email, name }, { new: true })
     .then((data) => res.send({ data }))
     .catch((error) => {
       if (error.code === 11000) {
         next(new EmailDuplicateError('Пользователь с таким e-mail уже существует'));
-      } else if (error._message === 'user validation failed') {
+      } else if (error.name === 'ValidationError') {
         const validateError = new InValidDataError('Переданы некорректные данные при обновлении данных пользователя');
         return next(validateError);
       }
       return next(error);
     })
-
-  // {
-  //   if (error.name === 'ValidationError') {
-  //     next(new InValidDataError('Переданы некорректные данные при создании карточки'));
-  //   } else { next(error); }
-  // }
-
     .catch(next);
 };
 
